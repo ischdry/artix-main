@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>NFL GIFS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body class= "everything">
+
+    <div class="jumbotron-fluid center fontchange banner" id="mainbanner">
+        <div class="container">
+            <img src="./twitter_header_photo_2.png" class="banner img center"> 
+        </div>
+    </div>
+
+    
+
+    <div class="fluid-container">
+        <div class="row">
+
+            <div class="col-6" >
+            <div id= "ticketContainer" > 
+            </div>
+            </div>
+            <div class="col-3">
+            <div id= "youtubeContainer">
+
+            </div>
+            </div>
+
+            
+            <div class="col-3">
+            <div id = "addTag">
+                    <div class="fontColor"> <p> Search Artist Here! </p> 
+                    <div id = 'search-box'>
+                    <input id="search-text" style="color:white" name ='q' type="text" class="textbox fontColor" placeholder="Search" val="" >
+                    <input id="search-button" title="Search" value="Search" type="submit"> </button>
+                    </div>
+                    </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+<script>
+
+$(document).ready(function() {
+
+
+
+$("#search-button").on ('click', function () {
+    
+    var x = $("#search-text").val().trim();
+    console.log (x);
+
+    var queryURL = "https://www.googleapis.com/youtube/v3/search?part=id&q=" +x + "&type=video&key=AIzaSyChDVIewczWbA3L4t_6wizjbPo3N69i80o";
+
+    $.ajax({ 
+        url:queryURL,
+        method: 'GET'
+    }).done(function (response) {
+
+            $("#youtubeContainer").empty();
+
+            
+         for (var i = 0; i < 5 ; i++) {
+
+
+                var videoId = response.items[i].id.videoId;
+
+                var youtubeDiv =$("<div>");
+                var newVid = $("<iframe>");
+                newVid.attr ({ 
+                "src" : "https://www.youtube.com/embed/" + videoId,
+                    "width" : "420",
+                    "height" : "315"
+                })
+                newVid.addClass ("padding")
+             
+                youtubeDiv.append(newVid);
+               
+                $("#youtubeContainer").append(youtubeDiv);
+
+            }
+   })
+var seatgeekurl ="https://app.ticketmaster.com/discovery/v2/events.json?apikey=7yqvsqGsZrIyHV9ybLwpHLWAvdl1UyyF&keyword="+x;
+
+        $.ajax({
+            url:seatgeekurl,
+            method: 'GET'
+        }).done(function (response) {
+                console.log ("the seatgeek api worked");
+                console.log (response);
+                $("#ticketContainer").empty();
+                for (var i=0; i< 10; i++) {
+                
+                var ticketDiv =$("<div>");
+                ticketDiv.addClass ("border");
+                ticketDiv.addClass("fontColor");
+
+                    
+                ticketDiv.append(
+                "<h3> Name: " + response._embedded.events[i].name + "</h3>",
+                "<h3> Date: " + response._embedded.events[i].dates.start.localDate + "</h3>",
+                "<h3> Time: " + response._embedded.events[i].dates.start.localTime + "</h3>",
+                "<a href=  " + response._embedded.events[i].url +"> Link to terTicket: </a>" );
+
+               
+                $("#ticketContainer").append (ticketDiv);
+                
+                }
+                })
+
+
+});
+
+})
+
+   </script>  
+</body>
+</html>
